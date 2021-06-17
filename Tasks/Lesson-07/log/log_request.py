@@ -3,19 +3,20 @@ import inspect
 from functools import wraps
 
 
+def logger_init():
+    LOG_FORMATTER = "%(asctime)s | %(message)s"
+    DATEFMT = "%Y.%m.%d %H:%M:%S"
+
+    request_handler = logging.FileHandler('log/requests.log', encoding='utf-8')
+    request_handler.setFormatter(logging.Formatter(LOG_FORMATTER, datefmt=DATEFMT))
+
+    logger.setLevel(logging.DEBUG)
+    logger.addHandler(request_handler)
+
+
 def log(func):
     @wraps(func)
     def wrap(*args, **kwargs):
-        LOG_FORMATTER = "%(asctime)s | %(message)s"
-        DATEFMT = "%Y.%m.%d %H:%M:%S"
-
-        request_handler = logging.FileHandler('log/requests.log', encoding='utf-8')
-        request_handler.setFormatter(logging.Formatter(LOG_FORMATTER, datefmt=DATEFMT))
-
-        logger = logging.getLogger('requests')
-        logger.setLevel(logging.DEBUG)
-        logger.addHandler(request_handler)
-
         # f_names = [func.__name__]
         # frame = inspect.currentframe()
         # current_f_name = frame.f_code.co_name
@@ -41,3 +42,7 @@ def log(func):
 
         return func(*args, **kwargs)
     return wrap
+
+
+logger = logging.getLogger('requests')
+logger_init()
